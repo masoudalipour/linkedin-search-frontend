@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { searchProfiles } from "../api/search-api";
 import ResultCard from "../components/result-card";
 import AutocompleteInput from "../components/autocomplete-input";
 
 export default function SearchPage() {
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const [filters, setFilters] = useState({
     q: "",
     skill: "",
@@ -18,20 +19,28 @@ export default function SearchPage() {
     queryKey: ["search", submitted],
     queryFn: () => searchProfiles(submitted),
     retry: 1,
-    enabled: !!submitted.q || !!submitted.skill || !!submitted.job_title,
   });
 
   function updateFilter(key: keyof typeof filters, value: string) {
-    setFilters({
-      ...filters,
+    setFilters((previousFilters) => ({
+      ...previousFilters,
       [key]: value,
-    });
+    }));
+  }
+
+  function focusSearch() {
+    searchInputRef.current?.focus();
+  }
+
+  function closeDrawer() {
+    setDrawerOpen(false);
+    focusSearch();
   }
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitted(filters);
-    setDrawerOpen(false);
+    closeDrawer();
   }
 
   function clearFilters() {
@@ -43,7 +52,7 @@ export default function SearchPage() {
 
     setFilters(emptyFilters);
     setSubmitted(emptyFilters);
-    setDrawerOpen(false);
+    closeDrawer();
   }
 
   return (
@@ -54,20 +63,38 @@ export default function SearchPage() {
         {/* Search */}
 
         <div className="flex gap-2">
-          <input
-            className="
-              w-full
-              rounded-lg
-              border
-              p-3
-              focus:outline-none
-              focus:ring-2
-              focus:ring-black
-            "
-            placeholder="Search..."
-            value={filters.q}
-            onChange={(e) => updateFilter("q", e.target.value)}
-          />
+          <div className="w-full flex items-center rounded-md bg-white/5 pl-3 outline-1 -outline-offset-1 outline-gray-600 has-[input:focus-within]:outline-2 has-[input:focus-within]:-outline-offset-2 has-[input:focus-within]:outline-indigo-500">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="size-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+              />
+            </svg>
+
+            <input
+              autoFocus
+              ref={searchInputRef}
+              className="block min-w-0 grow bg-white py-1.5 pr-3 pl-1 text-base placeholder:text-gray-500 focus:outline-none sm:text-sm/6"
+              placeholder="Search..."
+              value={filters.q}
+              onChange={(e) => updateFilter("q", e.target.value)}
+              onBlur={() => {
+                window.setTimeout(() => {
+                  if (document.activeElement === document.body) {
+                    searchInputRef.current?.focus();
+                  }
+                }, 0);
+              }}
+            />
+          </div>
 
           <button
             type="button"
@@ -93,7 +120,9 @@ export default function SearchPage() {
               z-50
               bg-black/40
             "
-            onClick={() => setDrawerOpen(false)}
+            onClick={() => {
+              closeDrawer();
+            }}
           >
             {/* Drawer */}
 
@@ -116,7 +145,9 @@ export default function SearchPage() {
 
                 <button
                   type="button"
-                  onClick={() => setDrawerOpen(false)}
+                  onClick={() => {
+                    closeDrawer();
+                  }}
                   className="text-gray-500"
                 >
                   ✕
