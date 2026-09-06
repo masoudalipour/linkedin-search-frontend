@@ -7,7 +7,9 @@ interface Props {
 export default function ResultCard({ result }: Props) {
   return (
     <div className="border rounded-lg p-5 shadow-sm hover:shadow-md transition">
-      <h2 className="text-xl font-semibold">{result.full_name}</h2>
+      <h2 className="text-xl font-semibold overflow-hidden: break-words">
+        {result.full_name}
+      </h2>
 
       <p className="text-gray-600">{result.job_title}</p>
 
