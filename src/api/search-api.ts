@@ -9,6 +9,7 @@ export async function searchProfiles(params: {
   q?: string;
   skill?: string;
   job_title?: string;
+  page?: number;
 }) {
   const response = await api.get<SearchResponse>("/search", {
     params,

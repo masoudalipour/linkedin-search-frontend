@@ -13,11 +13,12 @@ export default function SearchPage() {
   });
 
   const [submitted, setSubmitted] = useState(filters);
+  const [page, setPage] = useState(1);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const { data, isLoading, isFetching, isError, error, refetch } = useQuery({
-    queryKey: ["search", submitted],
-    queryFn: () => searchProfiles(submitted),
+    queryKey: ["search", submitted, page],
+    queryFn: () => searchProfiles({ ...submitted, page }),
     retry: 1,
   });
 
@@ -39,6 +40,7 @@ export default function SearchPage() {
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
+    setPage(1);
     setSubmitted(filters);
     closeDrawer();
   }
@@ -51,6 +53,7 @@ export default function SearchPage() {
     };
 
     setFilters(emptyFilters);
+    setPage(1);
     setSubmitted(emptyFilters);
     closeDrawer();
   }
@@ -275,6 +278,39 @@ export default function SearchPage() {
                     <ResultCard key={index} result={item} />
                   ))}
                 </div>
+              )}
+
+              {data.results.length > 0 && (
+                <nav
+                  aria-label="Search results pagination"
+                  className="mt-6 flex items-center justify-between border-t pt-4"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setPage((currentPage) => currentPage - 1)}
+                    disabled={page === 1 || isFetching}
+                    className="rounded-lg border px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    Previous
+                  </button>
+
+                  <span className="text-sm text-gray-600" aria-live="polite">
+                    Page {page}
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (data.next_page !== null) {
+                        setPage(data.next_page);
+                      }
+                    }}
+                    disabled={data.next_page === null || isFetching}
+                    className="rounded-lg border px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    Next
+                  </button>
+                </nav>
               )}
             </>
           )}

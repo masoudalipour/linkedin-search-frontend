@@ -11,6 +11,6 @@ export interface SearchResult {
 
 export interface SearchResponse {
   total: number;
-  next_page: string | null;
+  next_page: number | null;
   results: SearchResult[];
 }
