@@ -89,13 +89,6 @@ export default function SearchPage() {
               placeholder="Search..."
               value={filters.q}
               onChange={(e) => updateFilter("q", e.target.value)}
-              onBlur={() => {
-                window.setTimeout(() => {
-                  if (document.activeElement === document.body) {
-                    searchInputRef.current?.focus();
-                  }
-                }, 0);
-              }}
             />
           </div>
 
@@ -287,7 +280,10 @@ export default function SearchPage() {
                 >
                   <button
                     type="button"
-                    onClick={() => setPage((currentPage) => currentPage - 1)}
+                    onClick={() => {
+                      setPage((currentPage) => currentPage - 1);
+                      focusSearch();
+                    }}
                     disabled={page === 1 || isFetching}
                     className="rounded-lg border px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-40"
                   >
@@ -303,6 +299,7 @@ export default function SearchPage() {
                     onClick={() => {
                       if (data.next_page !== null) {
                         setPage(data.next_page);
+                        focusSearch();
                       }
                     }}
                     disabled={data.next_page === null || isFetching}
