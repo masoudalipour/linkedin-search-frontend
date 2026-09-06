@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { searchProfiles } from "../api/search-api";
 import ResultCard from "../components/result-card";
+import AutocompleteInput from "../components/autocomplete-input";
 
 export default function SearchPage() {
   const [filters, setFilters] = useState({
@@ -123,31 +124,29 @@ export default function SearchPage() {
               </div>
 
               <div className="space-y-4">
-                <div>
-                  <label className="mb-1 block text-sm font-medium">
-                    Skill
-                  </label>
+                <AutocompleteInput
+                  label="Skill"
+                  field="skills"
+                  value={filters.skill}
+                  onSelect={(value) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      skill: value,
+                    }))
+                  }
+                />
 
-                  <input
-                    className="w-full rounded-lg border p-3"
-                    placeholder="e.g. leadership"
-                    value={filters.skill}
-                    onChange={(e) => updateFilter("skill", e.target.value)}
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-1 block text-sm font-medium">
-                    Job title
-                  </label>
-
-                  <input
-                    className="w-full rounded-lg border p-3"
-                    placeholder="e.g. engineering"
-                    value={filters.job_title}
-                    onChange={(e) => updateFilter("job_title", e.target.value)}
-                  />
-                </div>
+                <AutocompleteInput
+                  label="Job title"
+                  field="job_title"
+                  value={filters.job_title}
+                  onSelect={(value) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      job_title: value,
+                    }))
+                  }
+                />
 
                 <button
                   type="submit"

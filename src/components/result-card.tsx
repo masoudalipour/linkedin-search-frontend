@@ -27,7 +27,7 @@ export default function ResultCard({ result }: Props) {
         <strong>Skills:</strong>
       </p>
       <div className="mt-3 flex flex-wrap gap-2">
-        {result.skills.slice(0, 8).map((skill) => (
+        {result.skills.map((skill) => (
           <span key={skill} className="bg-gray-100 px-2 py-1 rounded text-sm">
             {skill}
           </span>
