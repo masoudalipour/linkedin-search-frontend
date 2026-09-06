@@ -23,7 +23,7 @@ export default function ResultCard({ result }: Props) {
           />
         </svg>
 
-        <h2 className="text-xl font-semibold overflow-hidden: break-words">
+        <h2 className="text-xl font-semibold capitalize overflow-hidden: break-words">
           {result.full_name}
         </h2>
       </div>
